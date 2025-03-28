@@ -3,13 +3,16 @@ import { View, Text, TextInput, Button } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 
 export default function Test() {
+  const [wsUrl, setWsUrl] = useState("ws://localhost:3000/cable"); // State for WebSocket URL
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [serverMessages, setServerMessages] = useState([]);
   const [message, setMessage] = useState(""); // state for input text
   const ws = useRef<WebSocket | null>(null); // perdsist websocket 
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:3000/cable");
+    if (!wsUrl) return;
+
+    ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
@@ -62,6 +65,18 @@ export default function Test() {
 
   return (
     <View>
+      <TextInput
+        style={{
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          marginBottom: 10,
+          paddingHorizontal: 10,
+        }}
+        placeholder="Enter WebSocket URL..."
+        value={wsUrl}
+        onChangeText={setWsUrl}
+      />
       <Text style={{ color: "blue" }}>
         {isConnected ? "Connected to WebSocket" : "Not connected to WebSocket"}
       </Text>
